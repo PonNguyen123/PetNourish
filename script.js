@@ -93,8 +93,13 @@ let currentPetProfile = null;
 let currentFoodSelection = null;
 let currentRecommendations = [];
 let compareSelection = [];
+let currentUserContext = null;
 
 // --- DOM references ---------------------------------------
+
+const onboardingOverlay = document.getElementById('onboarding-overlay');
+const onboardingForm = document.getElementById('onboarding-form');
+const userGreeting = document.getElementById('user-greeting');
 
 const petForm = document.getElementById('pet-form');
 const submitBtn = document.getElementById('submit-btn');
@@ -129,6 +134,14 @@ const clearCompareBtn = document.getElementById('clear-compare');
 const weightInput = document.getElementById('weight');
 const weightError = document.getElementById('weight-error');
 const toast = document.getElementById('toast');
+
+// Reminders DOM references
+const mealsPerDaySelect = document.getElementById('meals-per-day');
+const buildScheduleBtn = document.getElementById('build-schedule');
+const reminderOutput = document.getElementById('reminder-output');
+const healthNotesInput = document.getElementById('health-notes');
+const saveHealthNotesBtn = document.getElementById('save-health-notes');
+const healthNotesDisplay = document.getElementById('health-notes-display');
 
 // --- Helpers ----------------------------------------------
 
@@ -280,6 +293,48 @@ function renderSavedPets() {
 
     savedPetsList.appendChild(chip);
   });
+}
+
+// --- User context (onboarding) ---------------------------
+
+function getStoredUserContext() {
+  try {
+    const raw = localStorage.getItem('pn-user-context');
+    if (!raw) return null;
+    return JSON.parse(raw);
+  } catch {
+    return null;
+  }
+}
+
+function saveUserContext(ctx) {
+  localStorage.setItem('pn-user-context', JSON.stringify(ctx));
+}
+
+function applyUserContextToUI(ctx) {
+  currentUserContext = ctx;
+  if (!userGreeting) return;
+
+  const name = ctx.userName || 'there';
+  let relationText = 'your pet';
+
+  if (ctx.userRole === 'family-pet') relationText = 'your family’s pet';
+  if (ctx.userRole === 'client-pet') relationText = 'a client’s pet';
+  if (ctx.userRole === 'shelter-pet') relationText = 'a foster / shelter pet';
+  if (ctx.userRole === 'other') relationText = 'this pet';
+
+  userGreeting.textContent = `Hi ${name}, we’ll help you look after ${relationText}.`;
+  userGreeting.hidden = false;
+}
+
+function initUserContext() {
+  const stored = getStoredUserContext();
+  if (stored && stored.userRole) {
+    applyUserContextToUI(stored);
+    if (onboardingOverlay) onboardingOverlay.style.display = 'none';
+  } else {
+    if (onboardingOverlay) onboardingOverlay.style.display = 'flex';
+  }
 }
 
 // --- UI helpers ------------------------------------------
@@ -553,6 +608,41 @@ function updateFeedingAmount() {
   feedingOutput.textContent = `Daily amount: ~${grams} g (split into 2–3 meals)`;
 }
 
+// --- Reminders & Care ------------------------------------
+
+function buildFeedingSchedule() {
+  const meals = parseInt(mealsPerDaySelect.value, 10) || 3;
+  const patterns = {
+    2: ['08:00', '18:00'],
+    3: ['08:00', '13:00', '18:00'],
+    4: ['07:00', '12:00', '17:00', '21:00']
+  };
+  const times = patterns[meals] || patterns[3];
+
+  reminderOutput.innerHTML = '';
+
+  const titleLi = document.createElement('li');
+  let petName = (currentPetProfile && currentPetProfile.petName) || 'your pet';
+  titleLi.textContent = `${meals} meals/day suggestion for ${petName}:`;
+  reminderOutput.appendChild(titleLi);
+
+  times.forEach(time => {
+    const li = document.createElement('li');
+    li.textContent = `• ${time}`;
+    reminderOutput.appendChild(li);
+  });
+}
+
+function saveHealthNotes() {
+  const text = (healthNotesInput.value || '').trim();
+  if (!text) {
+    showToast('Add a short note first.');
+    return;
+  }
+  healthNotesDisplay.textContent = text;
+  showToast('Health note saved for this session.');
+}
+
 // --- Compare panel ---------------------------------------
 
 function updateCompareSelection(foodId, checked) {
@@ -650,9 +740,10 @@ function updateThemeToggleVisual() {
   if (labelEl) labelEl.textContent = isDark ? 'Dark' : 'Light';
 }
 
-// --- Init theme & saved pets -----------------------------
+// --- Init theme, user context & saved pets ---------------
 
 applyStoredThemePreference();
+initUserContext();
 renderSavedPets();
 
 // Theme toggle
@@ -670,6 +761,22 @@ if (weightInput) {
   weightInput.addEventListener('input', () => {
     if (weightError) weightError.hidden = true;
     weightInput.classList.remove('has-error');
+  });
+}
+
+// Onboarding submit
+if (onboardingForm) {
+  onboardingForm.addEventListener('submit', e => {
+    e.preventDefault();
+    const name = document.getElementById('userName').value.trim();
+    const userRole = document.getElementById('userRole').value;
+
+    const ctx = { userName: name, userRole };
+    saveUserContext(ctx);
+    applyUserContextToUI(ctx);
+
+    if (onboardingOverlay) onboardingOverlay.style.display = 'none';
+    showToast(`Welcome${name ? ' ' + name : ''}!`);
   });
 }
 
@@ -822,3 +929,17 @@ clearCompareBtn.addEventListener('click', () => {
     cb.checked = false;
   });
 });
+
+// Reminders panel events
+if (buildScheduleBtn) {
+  buildScheduleBtn.addEventListener('click', buildFeedingSchedule);
+}
+
+if (saveHealthNotesBtn) {
+  saveHealthNotesBtn.addEventListener('click', saveHealthNotes);
+}
+
+// Initialise a basic default schedule view
+if (reminderOutput) {
+  buildFeedingSchedule();
+}
