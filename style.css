@@ -94,13 +94,15 @@ body.theme-dark .chip-green {
 /* Inputs + selects in dark mode */
 body.theme-dark input[type="text"],
 body.theme-dark input[type="number"],
-body.theme-dark select {
+body.theme-dark select,
+body.theme-dark textarea {
   background: #050806;
   border-color: #27342E;
   color: var(--text-main);
 }
 
-body.theme-dark input::placeholder {
+body.theme-dark input::placeholder,
+body.theme-dark textarea::placeholder {
   color: #707c76;
 }
 
@@ -165,6 +167,45 @@ body.theme-dark .helper-text {
 
 body.theme-dark .leaf {
   opacity: 0.55;
+}
+
+/* Onboarding overlay */
+
+.onboarding-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.45);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 50;
+  backdrop-filter: blur(8px);
+}
+
+.onboarding-card {
+  width: 100%;
+  max-width: 420px;
+  background: var(--bg-cream);
+  border-radius: 20px;
+  padding: 20px 20px 18px;
+  box-shadow: 0 18px 40px rgba(0, 0, 0, 0.35);
+  animation: cardRiseIn 0.4s ease-out forwards;
+}
+
+.onboarding-card h2 {
+  margin: 0;
+  font-family: 'Poppins', system-ui, sans-serif;
+  font-size: 22px;
+}
+
+.onboarding-subtitle {
+  margin: 6px 0 14px;
+  font-size: 13px;
+  color: var(--text-muted);
+}
+
+body.theme-dark .onboarding-card {
+  background: #101712;
 }
 
 /* Layout */
@@ -251,6 +292,12 @@ body.theme-dark .brand::before {
 .brand-text p {
   margin: 2px 0 0;
   font-size: 13px;
+  color: var(--text-muted);
+}
+
+.user-greeting {
+  margin: 3px 0 0;
+  font-size: 12px;
   color: var(--text-muted);
 }
 
@@ -383,6 +430,10 @@ body.theme-dark .theme-toggle__thumb {
   animation-delay: 0.18s;
 }
 
+.card-reminders {
+  animation-delay: 0.24s;
+}
+
 .card h2 {
   margin: 0;
   font-family: 'Poppins', system-ui, sans-serif;
@@ -425,9 +476,9 @@ label {
 
 input[type="text"],
 input[type="number"],
-select {
-  height: 46px;
-  padding: 0 12px;
+select,
+textarea {
+  padding: 10px 12px;
   border-radius: var(--radius-input);
   border: 1.5px solid var(--border-soft);
   background: var(--white);
@@ -437,12 +488,25 @@ select {
   transition: border-color 0.2s ease, box-shadow 0.2s ease, transform 0.1s ease;
 }
 
-input::placeholder {
+input[type="text"],
+input[type="number"],
+select {
+  height: 46px;
+}
+
+textarea {
+  resize: vertical;
+  min-height: 80px;
+}
+
+input::placeholder,
+textarea::placeholder {
   color: #b3b3b3;
 }
 
 input:focus,
-select:focus {
+select:focus,
+textarea:focus {
   border-color: var(--green-main);
   box-shadow: 0 0 0 3px rgba(133, 200, 138, 0.25);
   transform: translateY(-1px);
@@ -870,7 +934,7 @@ body.theme-dark .compare-panel {
   margin-top: 2px;
   padding: 2px 6px;
   border-radius: 999px;
-  background: #469459;
+  background: #3f804f;
 }
 
 /* Details */
@@ -965,6 +1029,56 @@ body.theme-dark .compare-panel {
   color: var(--green-dark);
 }
 
+/* Reminders & Care */
+
+.reminders-subtitle {
+  margin-bottom: 10px;
+}
+
+.reminder-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 14px;
+}
+
+@media (max-width: 700px) {
+  .reminder-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+.reminder-block h4 {
+  margin: 0 0 6px;
+  font-size: 13px;
+  font-weight: 600;
+  font-family: 'Poppins', system-ui, sans-serif;
+}
+
+.schedule-list {
+  margin: 8px 0 0;
+  padding-left: 18px;
+  font-size: 13px;
+  color: var(--text-muted);
+}
+
+.schedule-list li + li {
+  margin-top: 3px;
+}
+
+.health-notes-display {
+  margin-top: 8px;
+  font-size: 12px;
+  padding: 8px 10px;
+  border-radius: 12px;
+  background: #f6faf6;
+  color: var(--text-muted);
+  min-height: 32px;
+}
+
+body.theme-dark .health-notes-display {
+  background: #111913;
+}
+
 /* Skeleton loading state */
 
 .skeleton-card {
@@ -1045,7 +1159,7 @@ body.theme-dark .skeleton-line {
   box-shadow: 0 14px 30px rgba(0, 0, 0, 0.35);
   opacity: 0;
   pointer-events: none;
-  z-index: 40;
+  z-index: 60;
   transition: opacity 0.25s ease, transform 0.25s ease;
 }
 
