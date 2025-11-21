@@ -28,6 +28,41 @@
     <div class="leaf">🍁</div>
   </div>
 
+  <!-- Onboarding step: who is using the app -->
+  <div class="onboarding-overlay" id="onboarding-overlay">
+    <div class="onboarding-card">
+      <h2>Welcome to PetNourish</h2>
+      <p class="onboarding-subtitle">
+        Let’s personalise this space. Tell us who you are and whose pet you’re caring for.
+      </p>
+
+      <form id="onboarding-form">
+        <div class="form-group">
+          <label for="userName">Your name</label>
+          <input type="text" id="userName" placeholder="e.g. Pon" />
+        </div>
+
+        <div class="form-group">
+          <label for="userRole">This pet is...</label>
+          <select id="userRole">
+            <option value="my-pet" selected>My pet</option>
+            <option value="family-pet">A family pet</option>
+            <option value="client-pet">A client’s pet</option>
+            <option value="shelter-pet">A shelter / foster pet</option>
+            <option value="other">Other</option>
+          </select>
+        </div>
+
+        <button type="submit" class="btn btn-primary full-width">
+          Continue to app
+        </button>
+        <p class="helper-text">
+          Info is stored only in your browser for this demo. You can refresh to reset anytime.
+        </p>
+      </form>
+    </div>
+  </div>
+
   <div class="app-shell">
     <header class="app-header">
       <div class="brand">
@@ -37,6 +72,7 @@
         <div class="brand-text">
           <h1>PetNourish</h1>
           <p>Smart nutrition for happy pets</p>
+          <p class="user-greeting" id="user-greeting" hidden></p>
         </div>
       </div>
 
@@ -136,7 +172,7 @@
         </div>
       </section>
 
-      <!-- Right: Results + Details -->
+      <!-- Right: Results + Details + Reminders -->
       <section class="right-column">
         <!-- Recommendations -->
         <section class="card card-results">
@@ -245,6 +281,49 @@
               <p class="helper-text">
                 * Values are approximate and for concept demo only.
               </p>
+            </div>
+          </div>
+        </section>
+
+        <!-- New: Reminders & Care Notes -->
+        <section class="card card-reminders" id="reminders-card">
+          <h2>Reminders & Care Notes</h2>
+          <p class="subtitle reminders-subtitle">
+            Sketch a simple feeding routine and note anything you’re worried about.
+            This is a concept-only planner – it doesn’t send real notifications.
+          </p>
+
+          <div class="reminder-grid">
+            <div class="reminder-block">
+              <h4>Feeding schedule idea</h4>
+              <div class="form-group">
+                <label for="meals-per-day">Meals per day</label>
+                <select id="meals-per-day">
+                  <option value="2">2 meals</option>
+                  <option value="3" selected>3 meals</option>
+                  <option value="4">4 meals</option>
+                </select>
+              </div>
+              <button type="button" class="btn btn-secondary" id="build-schedule">
+                Create schedule suggestion
+              </button>
+              <ul class="schedule-list" id="reminder-output">
+                <!-- times appear here -->
+              </ul>
+            </div>
+
+            <div class="reminder-block">
+              <h4>Health concerns</h4>
+              <div class="form-group">
+                <label for="health-notes">Anything you want to keep an eye on?</label>
+                <textarea id="health-notes" rows="3" placeholder="e.g. Mochi vomits after eating too fast, or drinks more water than usual."></textarea>
+              </div>
+              <button type="button" class="btn btn-secondary" id="save-health-notes">
+                Save note (concept)
+              </button>
+              <div class="health-notes-display" id="health-notes-display">
+                <!-- latest note mirrors here -->
+              </div>
             </div>
           </div>
         </section>
