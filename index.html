@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>PetNourish – Pet Food Recommendation MVP</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <!-- Falling leaves background layer -->
+  <div class="leaf-layer" aria-hidden="true">
+    <div class="leaf">🍃</div>
+    <div class="leaf">🍂</div>
+    <div class="leaf">🍁</div>
+    <div class="leaf">🍃</div>
+    <div class="leaf">🍂</div>
+    <div class="leaf">🍁</div>
+    <div class="leaf">🍃</div>
+    <div class="leaf">🍂</div>
+    <div class="leaf">🍁</div>
+    <div class="leaf">🍃</div>
+    <div class="leaf">🍂</div>
+    <div class="leaf">🍁</div>
+  </div>
+
+  <div class="app-shell">
+    <header class="app-header">
+      <div class="brand">
+        <div class="logo-circle">
+          <span class="logo-paw">🐾</span>
+        </div>
+        <div class="brand-text">
+          <h1>PetNourish</h1>
+          <p>Smart nutrition for happy pets</p>
+        </div>
+      </div>
+
+      <!-- Dark mode toggle -->
+      <button class="theme-toggle" id="theme-toggle" type="button" aria-label="Toggle dark mode">
+        <span class="theme-toggle__icon">🌙</span>
+        <span class="theme-toggle__label">Dark</span>
+        <span class="theme-toggle__pill">
+          <span class="theme-toggle__thumb"></span>
+        </span>
+      </button>
+    </header>
+
+    <main class="app-main">
+      <!-- Left: Pet profile form -->
+      <section class="card card-form">
+        <h2>Pet Profile</h2>
+        <p class="subtitle">Tell us about your pet and we’ll suggest the best food options.</p>
+
+        <form id="pet-form" autocomplete="off">
+          <div class="form-grid">
+            <div class="form-group">
+              <label for="petName">Pet name</label>
+              <input type="text" id="petName" placeholder="e.g. Mochi">
+            </div>
+
+            <div class="form-group">
+              <label for="species">Species</label>
+              <select id="species">
+                <option value="dog">Dog</option>
+                <option value="cat">Cat</option>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label for="ageCategory">Age</label>
+              <select id="ageCategory">
+                <option value="puppy">Puppy / Kitten</option>
+                <option value="adult" selected>Adult</option>
+                <option value="senior">Senior</option>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label for="weight">Weight (kg)</label>
+              <input type="number" id="weight" min="0.5" step="0.1" placeholder="e.g. 5.5">
+              <p class="input-error" id="weight-error" hidden>
+                Please enter a valid weight (kg) greater than 0.
+              </p>
+            </div>
+
+            <div class="form-group">
+              <label for="activity">Activity level</label>
+              <select id="activity">
+                <option value="low">Low</option>
+                <option value="normal" selected>Normal</option>
+                <option value="high">High</option>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label for="health">Health focus</label>
+              <select id="health">
+                <option value="none">No special needs</option>
+                <option value="sensitive">Sensitive stomach / skin</option>
+                <option value="weight">Weight control</option>
+                <option value="allergy">Grain / ingredient allergy</option>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label for="budget">Budget</label>
+              <select id="budget">
+                <option value="any">Any</option>
+                <option value="value">Value</option>
+                <option value="mid" selected>Mid-range</option>
+                <option value="premium">Premium</option>
+              </select>
+            </div>
+          </div>
+
+          <button type="submit" class="btn btn-primary full-width" id="submit-btn">
+            Get recommendations
+          </button>
+          <p class="helper-text">This MVP uses sample data only – no real brands or tracking.</p>
+        </form>
+
+        <!-- Saved pets quick switch -->
+        <div class="saved-pets" id="saved-pets">
+          <div class="saved-pets-header">
+            <span class="saved-pets-title">Saved pets</span>
+            <span class="saved-pets-hint">Click a tag to reload their profile or delete</span>
+          </div>
+          <div class="saved-pets-list" id="saved-pets-list">
+            <!-- JS will render pet chips here -->
+          </div>
+        </div>
+      </section>
+
+      <!-- Right: Results + Details -->
+      <section class="right-column">
+        <!-- Recommendations -->
+        <section class="card card-results">
+          <div class="card-header-row">
+            <div>
+              <h2>Recommended Food</h2>
+              <p class="subtitle" id="results-subtitle">
+                Fill in the pet profile to see personalized suggestions.
+              </p>
+            </div>
+            <div class="header-right">
+              <div class="pill pill-soft" id="pet-summary-pill" hidden>
+                <span id="pet-summary-text"></span>
+              </div>
+              <div class="sort-wrap">
+                <label for="sortBy">Sort</label>
+                <select id="sortBy">
+                  <option value="match" selected>Best match</option>
+                  <option value="price">Price (low → high)</option>
+                  <option value="protein">Protein level</option>
+                </select>
+              </div>
+            </div>
+          </div>
+
+          <div id="recommendations-list" class="recommendations-list">
+            <!-- JS will inject cards here -->
+          </div>
+
+          <!-- Compare panel -->
+          <div class="compare-panel" id="compare-panel" hidden>
+            <div class="compare-header">
+              <span class="compare-title">Comparison</span>
+              <button type="button" class="compare-clear-btn" id="clear-compare">
+                Clear
+              </button>
+            </div>
+            <div class="compare-grid" id="compare-grid">
+              <!-- JS will render comparison here -->
+            </div>
+          </div>
+        </section>
+
+        <!-- Details + Feeding calculator -->
+        <section class="card card-details" id="details-card">
+          <h2>Food Details & Feeding Guide</h2>
+          <p class="subtitle" id="details-placeholder">
+            Select a food from the list to view details and feeding amount.
+          </p>
+
+          <div id="details-content" class="details-content" hidden>
+            <div class="details-header">
+              <div>
+                <h3 id="detail-name"></h3>
+                <p id="detail-brand" class="detail-brand"></p>
+              </div>
+              <div class="badge-score" id="detail-score-badge">
+                <span id="detail-score-text"></span>
+              </div>
+            </div>
+
+            <div class="chip-row" id="detail-tags"></div>
+
+            <div class="detail-section">
+              <h4>Highlights</h4>
+              <p id="detail-highlights"></p>
+            </div>
+
+            <div class="detail-section">
+              <h4>Main ingredients</h4>
+              <p id="detail-ingredients"></p>
+            </div>
+
+            <div class="detail-section">
+              <h4>Why this is a good match</h4>
+              <ul class="insights-list" id="insights-list">
+                <!-- JS inserts insights -->
+              </ul>
+            </div>
+
+            <div class="detail-section">
+              <h4>Feeding Calculator</h4>
+
+              <div class="feeding-grid">
+                <div>
+                  <label>Pet weight (kg)</label>
+                  <input type="number" id="feed-weight" min="0.5" step="0.1">
+                </div>
+                <div>
+                  <label>Activity level</label>
+                  <select id="feed-activity">
+                    <option value="low">Low</option>
+                    <option value="normal">Normal</option>
+                    <option value="high">High</option>
+                  </select>
+                </div>
+              </div>
+
+              <button type="button" class="btn btn-secondary" id="calculate-btn">
+                Recalculate amount
+              </button>
+
+              <p class="feeding-output" id="feeding-output">
+                Daily amount: – g (estimate)
+              </p>
+              <p class="helper-text">
+                * Values are approximate and for concept demo only.
+              </p>
+            </div>
+          </div>
+        </section>
+      </section>
+    </main>
+  </div>
+
+  <!-- Toast notification -->
+  <div class="toast" id="toast" aria-live="polite"></div>
+
+  <script src="script.js"></script>
+</body>
+</html>
